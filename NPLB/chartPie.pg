@@ -1,0 +1,78 @@
+#!/usr/bin/gnuplot
+
+##################### NPLB #####################
+
+#    No Promoter Left Behind (NPLB) is a tool to 
+#    find the different promoter architectures within a set of promoter
+#    sequences. More information can be found in the README file.
+#    Copyright (C) 2015  Sneha Mitra and Leelavati Narlikar
+
+#    NPLB is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+
+#    NPLB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+################################################
+
+# Creates pie chart for the data in the given column with respect to 
+# the best model that has been learned by NPLB.
+# It plots one pie chart per architecture of the best model.
+# It requires one file per architecture of the learned model
+# comprising of information necessary to create the pie chart.
+# It also takes as input the number of architectures,
+# layout of the pie charts, output file name
+# and file containing the set representing the column of the input file.
+
+################################################
+
+reset
+
+set term png size 600, 600
+
+set output var5
+set multiplot layout var3,var4
+set size square
+set xrange [-1:1]
+set yrange [-1:1]
+set style fill solid 1
+
+set palette rgbformulae 33,13,10
+
+unset border
+unset tics
+unset key
+
+######## Plotting pie chart for each architecture in loop. ########
+
+do for [t=1:var2] {
+  fname=sprintf("%s%d", var1, t)
+  arch=sprintf("Architecture %d", t)
+  set title arch
+  plot fname with circle linecolor var
+}
+
+do for [t=(var2+1):(var3*var4-1)] {
+   if((var2+1) <= (var3*var4-1)) {
+   	       set title ""
+   	       plot 2 with point ps 1
+   }
+}
+
+######## Plotting key to represent the unique set represented by the given column of input file. ########
+
+set key
+set key center
+set key title "Key"
+set title ""
+plot for [t=1:var6] 2 with points ps 1 pt 5 linecolor (t-1) title word(var7,t)
+
+unset multiplot
+set output

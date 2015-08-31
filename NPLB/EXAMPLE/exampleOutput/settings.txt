@@ -1,0 +1,26 @@
+
+Input fasta file: /home/sneha/new_data_arch_10.txt
+
+Output prefix: /home/sneha/NPLB/NPLBoutput
+
+Minimum number of architectures: 1
+
+Maximum number of architectures: 20
+
+Value of k in K-Fold cross validation: 5
+
+Number of models to be learnt per fold: 5
+
+Pseudocount: 1
+
+Number of iterations: Default
+
+Verbose mode: No
+
+Lambda: Varying
+
+Image saved: Yes
+
+Additional file: Not provided
+
+Maximum number of cores used: 32

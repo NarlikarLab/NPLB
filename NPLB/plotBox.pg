@@ -1,0 +1,51 @@
+#!/usr/bin/gnuplot
+
+##################### NPLB #####################
+
+#    No Promoter Left Behind (NPLB) is a tool to 
+#    find the different promoter architectures within a set of promoter
+#    sequences. More information can be found in the README file.
+#    Copyright (C) 2015  Sneha Mitra and Leelavati Narlikar
+
+#    NPLB is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+
+#    NPLB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+################################################
+
+# Create boxplots per architecture of the best model learned by NPLB.
+# It requires a file containing information necessary to create
+# the boxplots and output file name as input.
+
+################################################
+
+reset
+
+set term png size 600, 600
+set output var1
+unset key
+
+set linetype 1 lc rgb "dark-blue" lw 1
+set boxwidth 0.5 absolute
+
+unset ytics
+set y2tics rotate by 90
+set y2tics offset 0,-0.5
+set xrange[0:var2]
+set yrange[var3:var4]
+set xtics rotate 180
+set style fill solid 0.6 border lt -1
+
+######## Create boxplots. ########
+
+plot filename using 1:3:2:6:5:xticlabels(7) with candlesticks whiskerbars, \
+     ''         using 1:4:4:4:4 with candlesticks lt -1 notitle

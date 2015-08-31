@@ -1,0 +1,101 @@
+
+##################### NPLB #####################
+
+#    No Promoter Left Behind (NPLB) is a tool to 
+#    find the different promoter architectures within a set of promoter
+#    sequences. More information can be found in the README file.
+#    Copyright (C) 2015  Sneha Mitra and Leelavati Narlikar
+
+#    NPLB is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+
+#    NPLB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+################################################
+
+
+from ctypes import *
+
+# cst1 is first half of the code of cstructures.py. 
+# To construct cstructures.py run the make command.
+# Data structures used by the C programs
+
+class DataSet(Structure):
+    _fields_ = [("data", POINTER(POINTER(c_int))), ("features", c_int), ("featureValues", c_int), ("n", c_int), ("tu", c_int)]
+
+class Model(Structure):
+    _fields_ = [("arch", c_int), ("features", c_int), ("featureValues", c_int), ("n", c_int), ("count", POINTER(POINTER(POINTER(c_int)))), ("t", POINTER(c_int)), ("lmbda", c_double), ("pos", POINTER(POINTER(c_int))), ("posCount", POINTER(c_int)), ("fvNoise", POINTER(POINTER(c_int))), ("fnoise", POINTER(c_int)), ("alpha", c_float), ("tu", c_int)]
+
+class TrainOut(Structure):
+    _fields_ = [("m", POINTER(Model)), ("lp", POINTER(c_int)), ("likelihood", c_double)]
+
+def getCArray(l, c):  # Convert C 1D array to Python list
+    n = len(l)
+    arrOfN = c*n
+    num = arrOfN()
+    for i in xrange(n): num[i] = l[i]
+    return num
+
+def get2CArray(l, c):	# Convert C 2D array to Python list
+    pc = POINTER(c)
+    ll = len(l)
+    ptr = (pc*ll)()
+    for i in range(ll):
+        ll1 = len(l[i])
+        ptr[i] = (c*ll1)()
+        for j in range(ll1): 
+            ptr[i][j] = l[i][j]
+        del ll1
+    del pc, ll
+    return ptr
+
+def get3CArray(l, c):	# Convert C 3D array to Python list
+    pc = POINTER(c)
+    ppc = POINTER(pc)
+    ll = len(l)
+    ll1 = len(l[0])
+    ll2 = len(l[0][0])
+    ptr = (ppc*ll)()
+    for i in range(ll):
+        ptr[i] = (pc*ll1)()
+        for j in range(ll1):
+            ptr[i][j] = (c*ll2)()
+            for k in range(ll2): ptr[i][j][k] = l[i][j][k]
+    del ppc, pc, ll, ll1, ll2
+    return ptr
+
+def createModel(d):	# Create C structure
+    return Model(c_int(d['arch']), c_int(d['features']), c_int(d['featureValues']), c_int(d['n']), get3CArray(d['count'], c_int), getCArray(d['t'], c_int), c_double(d['lambda']), get2CArray(d['pos'], c_int), getCArray(d['posCount'], c_int), get2CArray(d['fvNoise'], c_int), getCArray(d['fnoise'], c_int), c_float(d['alpha']), c_int(d['tu']))
+
+def getModel(m):		   # Convert C structure "model" to Python dictionary
+    d = {}
+    d['n'] = m.contents.n
+    d['features'] = m.contents.features
+    d['featureValues'] = m.contents.featureValues
+    d['arch'] = m.contents.arch
+    d['lambda'] = m.contents.lmbda
+    d['posCount'] = [m.contents.posCount[i] for i in xrange(d['arch'])]
+    d['pos'] = map(lambda x: map(lambda y: m.contents.pos[x][y], xrange(d['features'])), xrange(d['arch']))
+    d['fnoise'] = [m.contents.fnoise[i] for i in xrange(d['features'])]
+    d['fvNoise'] = map(lambda x: map(lambda y: m.contents.fvNoise[x][y], xrange(d['featureValues'])), xrange(d['features']))
+    d['count'] = map(lambda x: map(lambda y: map(lambda z: m.contents.count[x][y][z], xrange(d['featureValues'])), xrange(d['features'])), xrange(d['arch']))
+    d['t'] = [m.contents.t[i] for i in xrange(d['arch'])]
+    d['alpha'] = m.contents.alpha
+    d['tu'] = m.contents.tu
+    return d
+
+def getTrainOut(to):	# Convert C structure "trainOut" to Python dictionary
+    d = {}
+    d['m'] = getModel(to.contents.m)
+    d['l'] = to.contents.likelihood
+    d['lp'] = [to.contents.lp[i] for i in xrange(d['m']['n'])]
+    return d
+

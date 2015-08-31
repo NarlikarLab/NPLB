@@ -1,0 +1,79 @@
+#!/usr/bin/gnuplot
+
+##################### NPLB #####################
+
+#    No Promoter Left Behind (NPLB) is a tool to 
+#    find the different promoter architectures within a set of promoter
+#    sequences. More information can be found in the README file.
+#    Copyright (C) 2015  Sneha Mitra and Leelavati Narlikar
+
+#    NPLB is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+
+#    NPLB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+################################################
+
+# Creates image matrix for the input model.
+# It requires the data file in matrix format, a data file to draw lines on the matrix,
+# files containing labels for both the axes, file containing information about the xtics and output file name.
+
+################################################
+
+reset
+set term png size 600, 800 
+set output var
+
+set multiplot
+set size 1,1
+set origin 0,0
+set autoscale fix
+set ytics font ", 10"
+set ytics right offset 1,0
+set tics scale 0
+set xtics font ", 7"
+set xtics right offset 0,0.6
+#set xtics rotate
+unset border
+unset colorbox
+unset key
+
+######## Set palette to the colours used to represent A, C, G and T by Weblogo 3.3 ########
+
+set palette defined ( 0 '#008000', 1 '#0000ff', 2 '#ffa500', 3 '#ff0000' )
+
+######## Plot image matrix, lines, labels, and xtics. ########
+
+plot filename matrix with image, \
+     var1 lw 2 lc rgb '#000000' with lines, \
+     var2 using 1:yticlabel(1) with points pt 0, \
+     var3 using 2:yticlabel(1) with points pt 0, \
+     var4 using 1:1:xtic(2) with points pt 0
+
+
+######## Plot key ########
+
+set origin 0,0
+unset xtics
+unset ytics
+set xrange [5:10]
+set yrange [5:10]
+set palette defined ( 0 '#008000', 1 '#0000ff', 2 '#ffa500', 3 '#ff0000' )
+set key
+set key outside below center horizontal reverse Left width 4
+
+plot 2 with points ps 1 pt 5 lc rgb '#008000' title 'A', \
+     2 with points ps 1 pt 5 lc rgb '#0000ff' title 'C', \
+     2 with points ps 1 pt 5 lc rgb '#ffa500' title 'G', \
+     2 with points ps 1 pt 5 lc rgb '#ff0000' title 'T'
+
+unset multiplot
+

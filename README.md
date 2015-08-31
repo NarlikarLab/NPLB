@@ -31,9 +31,9 @@ The following packages need to be installed in order to run NPLB:
 ## Installation
 NPLB is freely available at https://github.com/computationalBiology/NPLB/. Execute the following commands to download and install NPLB:
 ```sh
-wget 
-tar -xvf 
-cd
+wget "https://github.com/computationalBiology/NPLB/archive/v1.0.0.tar.gz"
+tar -xvf v1.0.0.tar.gz 
+cd NPLB-1.0.0/NPLB/
 make
 ```
 

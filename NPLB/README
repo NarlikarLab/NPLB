@@ -169,7 +169,7 @@ EXAMPLES
 	   promoterClassify -f example2.fa -m bestmodel.p -plotExtra example3.info -pCol 4
 	
 	To find the list of options:
-	   promoterLearn
+	   promoterClassify
 
 CONTACT
 	For further details and to report bugs: l.narlikar@ncl.res.in

@@ -137,7 +137,6 @@ def boxplot(arch, labels, filename, colNum, dirname):
         mx = mx + float(mx)/10
         mn = mn - float(mn)/10
 
-    print "var1", outfile, "var2", str(arch + 1), "var3", mn, "var4", mx
     os.system("gnuplot" + " " + "-e" + " " + "'filename=\"" + inpfile + "\"; var1=\"" + outfile + "\"; var2=" + str(arch + 1) + "; var3=" + str(mn) + "; var4=" + str(mx) + "' " + pfile)
     os.system("convert -rotate 90 " + outfile + " " + outfile)
 

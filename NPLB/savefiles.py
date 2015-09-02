@@ -216,7 +216,7 @@ def makeImage(dirname, model, rfile, tss, imgfile, inpfile):    # Create image m
     for (i1, i2) in lst:
         f.write(i1 + "\t" + i2 + "\n")
     f.close()
-    os.system("gnuplot" + " " + "-e" + " " + "'filename=\"" + dirname + hiddenData + "\"; var=\"" + dirname + imgfile + "\"; var1=\"" + dirname + hiddenDrawLines + "\"; var2=\"" + dirname + hiddenDrawLabels1 + "\"; var3=\"" + dirname + hiddenDrawLabels2 + "\"; var4=\"" + dirname + hiddenDrawXTics + "\"'" + " " + rfile + " 2>&1 | grep -v 'warning:'")
+    os.system("gnuplot" + " " + "-e" + " " + "'filename=\"" + dirname + hiddenData + "\"; var=\"" + dirname + imgfile + "\"; var1=\"" + dirname + hiddenDrawLines + "\"; var2=\"" + dirname + hiddenDrawLabels1 + "\"; var3=\"" + dirname + hiddenDrawLabels2 + "\"; var4=\"" + dirname + hiddenDrawXTics + "\"'" + " " + rfile + " 2> /dev/null")
     os.system("rm" + " " + "-f" + " " + dirname + "/.??*")
 
 

@@ -31,6 +31,7 @@
 reset
 
 set term png size 600, 600
+set bmargin 3
 set output var1
 unset key
 

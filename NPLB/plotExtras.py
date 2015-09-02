@@ -125,7 +125,7 @@ def boxplot(arch, labels, filename, colNum, dirname):
         q3 = np.percentile(l, 75)
         t1 = max(min(l), q1 - 1.5 * (q3 - q1))
         t2 = min(max(l), q3 + 1.5 * (q3 - q1))
-        f.write(str(i) + " " + str(t1) + " " + str(q1) + " " + str(np.median(l)) + " " + str(q3) + " " + str(t2) + " A" + str(i) + "\n")        # Save first quartile, median, third quartile and architecture count.
+        f.write(str(i) + " " + str(t1) + " " + str(q1) + " " + str(np.median(l)) + " " + str(q3) + " " + str(t2) + " PA" + str(i) + "\n")        # Save first quartile, median, third quartile and architecture count.
         mn.append(t1)
         mx.append(t2)
     f.close()

@@ -54,7 +54,7 @@ unset key
 
 do for [t=1:var2] {
   fname=sprintf("%s%d", var1, t)
-  arch=sprintf("Architecture %d", t)
+  arch=sprintf("PA%d", t)
   set title arch
   plot fname with circle linecolor var
 }

@@ -74,7 +74,7 @@ def printDetails(dirD, count):    # Print details of execution of promoterLearn
     print("Execution settings will be saved as " + dirD[1] + "/" + settingsFile)
     if d['-i'] != 0:
         print("Image matrices for the best model and the original unclustered one will be saved as " + dirD[1] + "/" + imageMatrix + " and " + dirD[1] + "/" + rawDataImage + " respectively.")
-        if d['-lambda'] == -1: print("Image matrics will also be saved per lambda value in " + dirD[1] + "Lambda_<lambda>/")
+        if d['-lambda'] == -1: print("Image matrices will also be saved per lambda value in " + dirD[1] + "/Lambda_<lambda>/")
     if d['-v'] != 0:
         if d['-lambda'] != -1: print("Likelihood plot for the best model learned for each fold of every architecture would be saved as " + dirD[1] + "/Arch_<architecture>/Fold_<fold_number>/" + plotLikelihoodImage)
         else: print("Likelihood plot for the best model learned for each fold of every architecture and lambda would be saved as " + dirD[1] + "/Lambda_<lambda>/Arch_<architecture>/Fold_<fold_number>/" + plotLikelihoodImage)

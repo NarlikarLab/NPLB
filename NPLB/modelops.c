@@ -159,7 +159,7 @@ dataSet* getData(char *s, char *outFile){
   c = fgetc(dataFile);
   if(c != '>') printMessages(1, s);
   rewind(dataFile);
-  tu = -1;
+  tu = 0;
   flag = 0;
   while((c = fgetc(dataFile)) != EOF){
     if(c == '>' && flag == 0){
@@ -189,10 +189,10 @@ dataSet* getData(char *s, char *outFile){
       default: printf("ERROR: Invalid symbol %c in file %s\n", c, s); exit(1);
       }
     }
-    if((c == 'T' || c == 't') && tu == -1 && flag == 0) tu = 0;
-    else if((c == 'U' || c == 'u') && tu == -1 && flag == 0) tu = 1;
-    if((c == 'T' || c == 't') && tu == 1 && flag == 0) printMessages(3, s);
-    else if((c == 'U' || c == 'u') && tu == 0 && flag == 0) printMessages(3, s);
+    /* if((c == 'T' || c == 't') && tu == -1 && flag == 0) tu = 0; */
+    /* else if((c == 'U' || c == 'u') && tu == -1 && flag == 0) tu = 1; */
+    /* if((c == 'T' || c == 't') && tu == 1 && flag == 0) printMessages(3, s); */
+    /* else if((c == 'U' || c == 'u') && tu == 0 && flag == 0) printMessages(3, s); */
   }
 
   if(ot == 1){

@@ -148,9 +148,9 @@ if __name__ == '__main__':
     except (KeyboardInterrupt, SystemExit):
         os.system('setterm -cursor on')
         if d is not None: 
-            if '-outFile' in d: d['-o'][1] = d['-outFile']
-            os.system ("rm"+ " " + "-rf" + " " + d['-o'][1])
-            print("\nDirectory " + d['-o'][1] + " deleted\n")
+#            if '-outFile' in d: d['-o'][1] = d['-outFile']
+#            os.system ("rm"+ " " + "-rf" + " " + d['-o'][1])
+#            print("\nDirectory " + d['-o'][1] + " deleted\n")
             print("\nExiting...\n")
         exit(2)
     exit(0)

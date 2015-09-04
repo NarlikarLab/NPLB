@@ -114,7 +114,7 @@ trainOut* callLearnData(dataSet *ds, model *m){
 
 /* Train data */
 void *trainData(void *vtds){
-  double maxLikelihood, tmpLikelihood, delta, checkPoint;
+  double maxLikelihood, tmpLikelihood, checkPoint;
   int i, j, newLabel, flag, oldLabel;
   model *m;
   int *lp;
@@ -122,7 +122,6 @@ void *trainData(void *vtds){
   trainDataStruct *tds;
   long long times, ct;
   FILE *fp;
-  delta = log(pow(10, -6));
   tds = (trainDataStruct*)vtds;
   if((tds->filename)[0] == '0') fp = NULL;
   else{
@@ -273,9 +272,6 @@ double calculateLikelihood(model *m){
 
 double calculateLikelihoodLabel(model *m, double likelihood, int oldArch, int newArch, int *data){
   int i, j;
-  double tmp1, tmp2;
-  tmp1 = 0;
-  tmp2 = 0;
   for(i = 0; i < m->features; i++){
     if((m->pos)[oldArch][i] == 1){
       for(j = 0; j < m->featureValues; j++){
@@ -448,7 +444,7 @@ int solvePosExp(model *m, int zi, int pos, unsigned int *seed, int flag){
 /* Compute cross validation likelihood */
 
 double cvLikelihood(dataSet *testSet, model *m){
-  int i, j, k, pos;
+  int i, j, k;
   double s, max, sum, *p;
   p = (double*)malloc(sizeof(double)*m->arch);
   if(!p) printMessages(0, NULL);
@@ -456,7 +452,6 @@ double cvLikelihood(dataSet *testSet, model *m){
   for(i = 0; i < testSet->n; i++){
     for(j = 0; j < m->arch; j++){
       p[j] = 0;
-      pos = 0;
       for(k = 0; k < testSet->features; k++){
 	p[j] += (m->pos)[j][k]*(log((m->count)[j][k][(testSet->data)[i][k]] + m->alpha) - log((m->t)[j] + m->featureValues*m->alpha)) + !(m->pos)[j][k]*(log((m->fvNoise)[k][(testSet->data)[i][k]] + m->alpha) - log((m->fnoise)[k] + m->featureValues*m->alpha));
       }

@@ -177,7 +177,10 @@ def makeImage(dirname, model, rfile, tss, imgfile, inpfile):    # Create image m
                     k = k + 1
                 except: pass
     f.close()
-    os.system("sed" + " " + "-i" + " " + "'s/A/0\t/g;s/a/0\t/g;s/C/1\t/g;s/c/1\t/g;s/G/2\t/g;s/g/2\t/g;s/T/3\t/g;s/t/3\t/g;'" + " " + dirname + hiddenData)    # Modify input Fasta file to replace A, C, G, and T with 0, 1, 2 and 3 respectively.
+    if sys.platform == "darwin":
+        os.system("sed" + " " + "-i" + " '' " + "'s/A/0\t/g;s/a/0\t/g;s/C/1\t/g;s/c/1\t/g;s/G/2\t/g;s/g/2\t/g;s/T/3\t/g;s/t/3\t/g;'" + " " + dirname + hiddenData)    # Modify input Fasta file to replace A, C, G, and T with 0, 1, 2 and 3 respectively on OS X.
+    else:
+        os.system("sed" + " " + "-i" + " " + "'s/A/0\t/g;s/a/0\t/g;s/C/1\t/g;s/c/1\t/g;s/G/2\t/g;s/g/2\t/g;s/T/3\t/g;s/t/3\t/g;'" + " " + dirname + hiddenData)    # Modify input Fasta file to replace A, C, G, and T with 0, 1, 2 and 3 respectively on Linux.
     f = open(dirname + hiddenDrawLines, "w")    # Save lines to be drawn on image matrix
 
     # Save labels for both axes of image matrix

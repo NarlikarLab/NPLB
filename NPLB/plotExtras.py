@@ -40,7 +40,10 @@ def checkValid(filename, colNum, total):    # Check format of input file. Input 
     try:
         with open(filename) as infile:
             for line in infile:
-                if line[0:3] != 'chr': continue
+                if line[0:3] != 'chr' and line[0] == '\#': continue
+                elif line[0:3] != 'chr': 
+                    print "WARNING: Header must begin with #"
+                    continue
                 ln = ln + 1
                 val = line.split()[colNum - 1]
                 try:
@@ -120,7 +123,6 @@ def boxplot(arch, labels, filename, colNum, dirname):
     for l in lst:
         i = i - 1
         j = j + 1
-        l = map(lambda x: np.log10(x), l)
         q1 = np.percentile(l, 25)
         q3 = np.percentile(l, 75)
         t1 = max(min(l), q1 - 1.5 * (q3 - q1))

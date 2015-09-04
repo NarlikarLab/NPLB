@@ -1,7 +1,7 @@
 
-Input fasta file: /home/sneha/new_data_arch_10.txt
+Input fasta file: /home/sneha/NPLB/EXAMPLE/example.fa
 
-Output prefix: /home/sneha/NPLB/NPLBoutput
+Output prefix: /home/sneha/NPLB/exampleOut_2
 
 Minimum number of architectures: 1
 
@@ -21,6 +21,6 @@ Lambda: Varying
 
 Image saved: Yes
 
-Additional file: Not provided
+Additional file: EXAMPLE/example.bed , column: 4 ,sort by column: 4
 
-Maximum number of cores used: 32
+Maximum number of cores used: 16

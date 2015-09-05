@@ -31,7 +31,7 @@ def getNumbers(n):    # Calculate layout for pie charts of all architectures of 
         for j in range(i, (i+3)):
             if i*j >= n: return (i, j)
 
-def checkValid(filename, colNum, total):    # Check format of input file. Input file must be a BED file.
+def checkValid(filename, colNum, total):    # Check format of input file. Input file must be a tab separated file, one line per sequence.
     ln = 0
     n = 0
     if not os.path.isfile(filename):
@@ -40,7 +40,7 @@ def checkValid(filename, colNum, total):    # Check format of input file. Input 
     try:
         with open(filename) as infile:
             for line in infile:
-                if line[0:3] != 'chr': continue
+#                if line[0:3] != 'chr': continue
                 ln = ln + 1
                 val = line.split()[colNum - 1]
                 try:
@@ -68,7 +68,7 @@ def piechart(arch, labels, filename, colNum, pname):
     dct = {}
     with open(filename) as infile:
         for line in infile:
-            if line[0:3] != 'chr': continue
+#            if line[0:3] != 'chr': continue
             val = line.split()[colNum - 1]
             if val not in dct:
                 dct[val] = 0
@@ -79,7 +79,7 @@ def piechart(arch, labels, filename, colNum, pname):
     i = 0
     with open(filename) as infile:
         for line in infile:
-            if line[0:3] != 'chr': continue
+#            if line[0:3] != 'chr': continue
             val = line.split()[colNum - 1]
             segments[labels[i] - 1][val] = segments[labels[i] - 1][val] + 1
             i = i + 1
@@ -107,7 +107,7 @@ def boxplot(arch, labels, filename, colNum, dirname):
     i = 0
     with open(filename) as infile:
         for line in infile:
-            if line[0:3] != 'chr': continue
+#            if line[0:3] != 'chr': continue
             val = float(line.split()[colNum - 1])
             (lst[labels[i]-1]).append(val)
             i = i + 1

@@ -148,7 +148,7 @@ def rearrange(d, pEx, colNum):
     i = 0
     with open(filename) as infile:
         for line in infile:
-            if line[0:3] != 'chr': continue
+#            if line[0:3] != 'chr': continue
             val = float(line.split()[colNum - 1])
             (lst[d['lp'][i]-1]).append(val)
             i = i + 1

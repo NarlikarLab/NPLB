@@ -111,7 +111,7 @@ def multiEval(picklefile, count, archC):
     while low <= high:
         p = [-5 for i in range(d['-proc'])]
         mid = int((low+high)/2)
-        if low == high: 
+        if low == high and best[0] != 0: 
             if best[0] == 0: best = (low+1, 0)
             break
         trs = []
@@ -213,7 +213,6 @@ def multiEval(picklefile, count, archC):
                 for ic in range(cnt):
                     if (checkIndex+ic) < d['-maxarch'] and countsArr[checkIndex+ic] == d['-kfold']*d['-lcount'] and cvals[checkIndex+ic] == 0:    # Compute cross validation likelihood if models of all folds of given architecture have been learned.
 
-
                         cvals[checkIndex+ic] = sum([libctest.cvLikelihood(testSets[x], byref(createModel(toArr[checkIndex+ic][x]['m']))) for x in range(d['-kfold'])])/d['-kfold']
                         saveInfo(checkIndex + ic)
 
@@ -238,7 +237,7 @@ def multiEval(picklefile, count, archC):
                             flag = 1
                             break
                     elif checkIndex == mid and cvals[mid] != 0: checkIndex = checkIndex + 1
-                    if checkIndex == mid+1 and cvals[checkIndex] != 0:
+                    if checkIndex == mid+1 and checkIndex < d['-maxarch'] and cvals[checkIndex] != 0:
                         if cvals[mid] != 0 and cvals[mid] > cvals[mid+1] and ((mid > d['-minarch'] - 1 and cvals[mid-1] < cvals[mid]) or (mid <= d['-minarch'] - 1)):
                             low = mid
                             high = mid
@@ -455,11 +454,11 @@ def learn(dt, outfile, count):
 
     # Learn best model directly if -minarch and -maxarch are same
 
-    if dt['-maxarch'] == dt['-minarch']:
-        d = dt
-        printBestModel(dt['-maxarch'])
-        m = learnModel(dt['-maxarch'], dt['-o'][1] + "/" + tempFile)
-        return m, []
+    # if dt['-maxarch'] == dt['-minarch']:
+    #     d = dt
+    #     printBestModel(dt['-maxarch'])
+    #     m = learnModel(dt['-maxarch'], dt['-o'][1] + "/" + tempFile)
+    #     return m, []
     for i in range(dt['-kfold']):    # Get randomized train sets and test sets for every fold
         trainSets.append(getData(libctest.getTrainSubset(ds, i, dt['-kfold'], pos)))
         testSets.append(getData(libctest.getTestSubset(ds, i, dt['-kfold'], pos)))

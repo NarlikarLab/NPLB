@@ -1,5 +1,5 @@
 
 On running example.txt on the system as:
-   /path/tp/NPLB/promoterLearn -f /path/to/example.txt -o Output
+   /path/tp/NPLB/promoterLearn -f /path/to/example.txt -o Output -plotExtra /path/to/example.bed -pCol 4 -sortBy 4
 
 The output results would be saved in Output which would be similar to exampleOutput.

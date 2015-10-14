@@ -33,6 +33,7 @@ def printHelp1():    # Print usage of promoterLearn
     print("\t-a Pseudo count. Default 1")
     print("\t-t maximum number of iterations. Default: It keeps on iterating until the maximum likelihood stops increasing for n consecutive iterations where n is the number of sequences in the input file")
     print("\t-i 0 or 1. 1 to save image matrix and 0 to ignore. Default 1")
+    print("\t-eps 0 or 1. 1 to save an EPS version of all image files. Default 0")
     print("\t-v 0 or 1. 1 to save likelihood plots of the learnt models. Default 0")
     print("\t-kfold k. Value of k in K-fold cross validation. Default 5")
     print("\t-lambda l. Non negative real number. Default: Varying lambda to find the best one")
@@ -51,6 +52,7 @@ def printHelp2():    # Print usage of promoterClassify
     print("\t-m file containing the model(compulsory)")
     print("\t-o output prefix")
     print("\t-i 0 or 1. 1 to save image matrix and 0 to ignore. Default 0. R needs to be installed for this option")
+    print("\t-eps 0 or 1. 1 to save an EPS version of all image files. Default 0")
     print("\t-plotExtra filename. Plots data from given file as pie charts or boxplots(depending on the type of data) for each architecture of the best model. Note: -pCol must also be set")
     print("\t-pCol Natural number. Plots the data in the given column of the given file in the form of pie charts or boxplots with respect to the architectures of the best model. Note: -plotExtra must specify a valid filename") 
     print("\t-sortBy Natural number. Sort architectures in increasing order of median values calculated from values in column -sortBy of file -plotExtra. Note: -plotExtra must specify a valid filename and -pCol must be set")
@@ -138,8 +140,8 @@ def validFile(s):    # Check if string is a valid file
     return len(lines), lines[0]
 
 def getValues():    # Read settings
-    d = {'-a': defaultPseudoCount, '-o': '', '-f': '', '-t': 0, '-i': 1, '-kfold': defaultKFold, '-m': '', '-lcount': defaultLearnCount, '-proc': 0, '-maxarch': defaultMaxArch, '-minarch': defaultMinArch, '-lambda': -1, '-tss': 0, '-v': 0, '-plotExtra': '', '-pCol': 0, '-sortBy': 0}
-    dF = {'-a': validNum, '-o': validFD, '-f': validFD, '-t': validInt, '-i': validR, '-kfold': validInt, '-m': validFD, '-lcount': validInt, '-proc': validInt, '-maxarch': validInt, '-minarch': validInt, '-lambda': validNum1, '-tss': validInt, '-v': validR, '-plotExtra': validFD, '-pCol': validInt, '-sortBy': validInt}
+    d = {'-a': defaultPseudoCount, '-o': '', '-f': '', '-t': 0, '-i': 1, '-kfold': defaultKFold, '-m': '', '-lcount': defaultLearnCount, '-proc': 0, '-maxarch': defaultMaxArch, '-minarch': defaultMinArch, '-lambda': -1, '-tss': 0, '-v': 0, '-plotExtra': '', '-pCol': 0, '-sortBy': 0, '-eps': 0}
+    dF = {'-a': validNum, '-o': validFD, '-f': validFD, '-t': validInt, '-i': validR, '-kfold': validInt, '-m': validFD, '-lcount': validInt, '-proc': validInt, '-maxarch': validInt, '-minarch': validInt, '-lambda': validNum1, '-tss': validInt, '-v': validR, '-plotExtra': validFD, '-pCol': validInt, '-sortBy': validInt, '-eps': validR}
     lst = []
     fv = int((sys.argv)[1])
     sysargv = (sys.argv)[2:]
@@ -169,9 +171,15 @@ def getValues():    # Read settings
         exit(2)
     validFile(d['-f'])
     if d['-m'] != '': validFile(d['-m'])
-    if d['-i'] != 0: d['-i'] = sysargv[-1] + makeImageFile
-    if d['-v'] != 0: d['-v'] = sysargv[-1] + makePlotFile
-    if d['-plotExtra'] != '' and d['-pCol'] != 0: d['-plotExtra'] = (d['-plotExtra'], (sysargv[-1] + boxPlotFile), (sysargv[-1] + pieChartFile))
+    if d['-i'] != 0: 
+        if d['-eps'] == 0: d['-i'] = [sysargv[-1] + makeImageFile]
+        else: d['-i'] = [sysargv[-1] + makeImageFile, sysargv[-1] + makeImageFileEPS]
+    if d['-v'] != 0: 
+        if d['-eps'] == 0: d['-v'] = [sysargv[-1] + makePlotFile]
+        else: d['-v'] = [sysargv[-1] + makePlotFile, sysargv[-1] + makePlotFileEPS]
+    if d['-plotExtra'] != '' and d['-pCol'] != 0: 
+        if d['-eps'] == 0: d['-plotExtra'] = (d['-plotExtra'], [(sysargv[-1] + boxPlotFile)], [(sysargv[-1] + pieChartFile)])
+        else: d['-plotExtra'] = (d['-plotExtra'], [(sysargv[-1] + boxPlotFile), (sysargv[-1] + boxPlotFileEPS)], [(sysargv[-1] + pieChartFile), (sysargv[-1] + pieChartFileEPS)])
     if d['-plotExtra'] != '' and d['-pCol'] == 0:
         print "ERROR: -pCol must be set to a positive integer"
         printHelp(fv)

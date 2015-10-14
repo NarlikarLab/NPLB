@@ -211,7 +211,7 @@ def multiEval(picklefile, count, archC):
                 elif checkIndex == mid + 1: cnt = 1
                 
                 for ic in range(cnt):
-                    if (checkIndex+ic) < d['-maxarch'] and countsArr[checkIndex+ic] == d['-kfold']*d['-lcount'] and cvals[checkIndex+ic] == 0:    # Compute cross validation likelihood if models of all folds of given architecture have been learned.
+                    if (checkIndex+ic) < d['-maxarch'] and (checkIndex+ic) >= (d['-minarch'] - 1) and countsArr[checkIndex+ic] == d['-kfold']*d['-lcount'] and cvals[checkIndex+ic] == 0:    # Compute cross validation likelihood if models of all folds of given architecture have been learned.
 
                         cvals[checkIndex+ic] = sum([libctest.cvLikelihood(testSets[x], byref(createModel(toArr[checkIndex+ic][x]['m']))) for x in range(d['-kfold'])])/d['-kfold']
                         saveInfo(checkIndex + ic)
@@ -368,7 +368,7 @@ def saveInfo(c):
         for fold in range(d['-kfold']):
             td = tDir + "/Fold_" + str(fold + 1)
             os.mkdir(td)
-            sf.saveDetails(toArr[c][fold], td, d['-i'], [], d['-tss'], 1, d['-plotExtra'], d['-pCol'], d['-sortBy'])
+            sf.saveDetails(toArr[c][fold], td, d['-i'], [], d['-tss'], 1, d['-plotExtra'], d['-pCol'], d['-sortBy'], d['-eps'])
     except OSError:
         print "ERROR: Cannot create directory in", d['-o'][1]
         exit(2)
@@ -379,8 +379,11 @@ def saveInfo(c):
 
         for sd in range(d['-lcount']):
             if os.path.isfile(d['-o'][1] + "/." + str(c + 1) + "_" + str(fold + 1) + "_" + str(sd)):
-                os.system("mv" + " " + d['-o'][1] + "/." + str(c + 1) + "_" + str(fold + 1) + "_"  + str(sd) + " " + tDir + "/Fold_" + str(fold + 1) + "/.plot")
-        os.system("gnuplot" + " " + "-e" + " " + "'filename=\"" + tDir + "/Fold_" + str(fold + 1) + "/" + plotFileHiddenName + "\"; var=\"" + tDir + "/Fold_" + str(fold + 1)  + "/" + plotLikelihoodImage + "\"'" + " " + d['-v'])
+                os.system("mv" + " " + d['-o'][1] + "/." + str(c + 1) + "_" + str(fold + 1) + "_"  + str(sd) + " " + tDir + "/Fold_" + str(fold + 1) + "/" + plotFileHiddenName)
+        os.system("gnuplot" + " " + "-e" + " " + "'filename=\"" + tDir + "/Fold_" + str(fold + 1) + "/" + plotFileHiddenName + "\"; var=\"" + tDir + "/Fold_" + str(fold + 1)  + "/" + plotLikelihoodImage + "\"'" + " " + d['-v'][0])
+
+        if len(d['-v']) != 1: os.system("gnuplot" + " " + "-e" + " " + "'filename=\"" + tDir + "/Fold_" + str(fold + 1) + "/" + plotFileHiddenName + "\"; var=\"" + tDir + "/Fold_" + str(fold + 1)  + "/" + plotLikelihoodImageEPS + "\"'" + " " + d['-v'][1])
+
         os.system("rm" + " " + "-f" + " " + tDir + "/Fold_" + str(fold + 1) + "/" + plotFileHiddenName)
 
 def learnOne():
@@ -480,7 +483,7 @@ def learn(dt, outfile, count):
         os.system("cp " + finalOut + "/" + tempLabelsFile + " " + dt['-o'][1] + "/")
         
         m, cvals = learnDiffLambda(dt, outfile, count, ds, trainSets, testSets)
-        sf.saveDetails(m, dt['-o'][1] + "/", d['-i'], cvals, dt['-tss'], 0, dt['-plotExtra'], dt['-pCol'], dt['-sortBy'])
+        sf.saveDetails(m, dt['-o'][1] + "/", d['-i'], cvals, dt['-tss'], 0, dt['-plotExtra'], dt['-pCol'], dt['-sortBy'], dt['-eps'])
         bestCVL = best[1]
         i = 1
         while(1):
@@ -494,9 +497,9 @@ def learn(dt, outfile, count):
                 exit(2)
             os.system("cp " + finalOut + "/" + tempLabelsFile + " " + dt['-o'][1] + "/")
             m1, cvals1 = learnDiffLambda(dt, outfile, count, ds, trainSets, testSets)
-            sf.saveDetails(m1, dt['-o'][1] + "/", d['-i'], cvals1, dt['-tss'], 0, dt['-plotExtra'], dt['-pCol'], dt['-sortBy'])
+            sf.saveDetails(m1, dt['-o'][1] + "/", d['-i'], cvals1, dt['-tss'], 0, dt['-plotExtra'], dt['-pCol'], dt['-sortBy'], dt['-eps'])
             posMin = min(m1['m']['posCount'])
-            if posMin == 0 or best[1] < bestCVL or (best[1] == bestCVL and best[0] == m['m']['arch']):    # Exit when minimum number of important features is 0 or when best corss validation likelihood is lesser compared to the one by previous lambda or when cross validation likelihood and number of architecture remains same
+            if posMin == 0 or best[1] < bestCVL:    # Exit when minimum number of important features is 0 or when best cross validation likelihood is lesser compared to the one by previous lambda
                 del m1, cvals1
                 break
             bestCVL = best[1]

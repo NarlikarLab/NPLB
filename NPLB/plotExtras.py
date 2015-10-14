@@ -61,8 +61,11 @@ def checkValid(filename, colNum, total):    # Check format of input file. Input 
 
 def piechart(arch, labels, filename, colNum, pname):
     outfile = pname + pieChartImage
+    outfile1 = pname + pieChartImageEPS
     inpfile = pname + pieChartHiddenFile
-    pfile = filename[2]
+    pfile = filename[2][0]
+    if len(filename[2]) == 1: pfile1 = ""
+    else: pfile1 = filename[2][1]
     filename = filename[0]
     (v3, v4) = getNumbers(arch + 1)
     dct = {}
@@ -95,12 +98,17 @@ def piechart(arch, labels, filename, colNum, pname):
             k = k + 1
         f.close()
     os.system("gnuplot -e 'var1=\"" + inpfile + "\"; var2=" + str(arch) + "; var3=" + str(v3) + "; var4=" + str(v4) + "; var5=\"" + outfile + "\"; var6=" + str(l) + "; var7=\"" + l1 + "\"' " + pfile)
+    if pfile1 != "": os.system("gnuplot -e 'var1=\"" + inpfile + "\"; var2=" + str(arch) + "; var3=" + str(v3) + "; var4=" + str(v4) + "; var5=\"" + outfile1 + "\"; var6=" + str(l) + "; var7=\"" + l1 + "\"' " + pfile1)
     os.system("rm -rf " + inpfile + "*")
 
 def boxplot(arch, labels, filename, colNum, dirname):
     outfile = dirname + boxPlotImage
+    outfile1 = dirname + boxPlotImageEPS
+    toutfile = dirname + boxPlotTempImage
     inpfile = dirname + boxPlotHiddenFile
-    pfile = filename[1]
+    pfile = filename[1][0]
+    if len(filename[1]) == 1: pfile1 = ""
+    else: pfile1 = filename[1][1]
     filename = filename[0]
 
     lst = [[] for _ in xrange(arch)]
@@ -141,6 +149,13 @@ def boxplot(arch, labels, filename, colNum, dirname):
 
     os.system("gnuplot" + " " + "-e" + " " + "'filename=\"" + inpfile + "\"; var1=\"" + outfile + "\"; var2=" + str(arch + 1) + "; var3=" + str(mn) + "; var4=" + str(mx) + "' " + pfile)
     os.system("convert -rotate 90 " + outfile + " " + outfile)
+    if pfile1 != "":
+        os.system("gnuplot" + " " + "-e" + " " + "'filename=\"" + inpfile + "\"; var1=\"" + toutfile + "\"; var2=" + str(arch + 1) + "; var3=" + str(mn) + "; var4=" + str(mx) + "' " + pfile1)
+        os.system("epsffit -r 0 0 5000 5000 " + toutfile + " " + outfile1)
+        os.system("epsffit -r 0 0 5000 5000 " + outfile1 + " " + toutfile)
+        os.system("epsffit -r 0 0 5000 5000 " + toutfile + " " + outfile1)
+        os.system("rm " + toutfile)
+    os.system("rm " + inpfile)
 
 def rearrange(d, pEx, colNum):
     filename = pEx[0]
@@ -178,7 +193,11 @@ def plotExt(d, pEx, pCol, dirname):
         return
     elif cv == 1: 
         boxplot(d['m']['arch'], d['lp'], pEx, pCol, dirname)
-        print "\nBoxplot saved as " + dirname + boxPlotImage + "\n" 
+        print "\nBoxplot saved as " + dirname + boxPlotImage, 
+        if len(pEx[1]) != 1: print "and as " + dirname + boxPlotImageEPS,
+        print "\n\n"
     elif cv == 2: 
         piechart(d['m']['arch'], d['lp'], pEx, pCol, dirname)
-        print "\nPie chart saved as " + dirname + pieChartImage + "\n"
+        print "\nPie chart saved as " + dirname + pieChartImage, 
+        if len(pEx[2]) != 1: print "and as " + dirname + pieChartImageEPS,
+        print "\n\n"

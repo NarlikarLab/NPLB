@@ -122,7 +122,7 @@ def getModel(d):    # Learn best model
     saveSettings(d)
     m, cvals = ev.learn(d, dirname + "/" + tempLabelsFile, count)
     print "\n\nModel learnt successfully.\nSaving details..."
-    sf.saveDetails(m, dirname, d['-i'], cvals, d['-tss'], 0, d['-plotExtra'], d['-pCol'], d['-sortBy'])
+    sf.saveDetails(m, dirname, d['-i'], cvals, d['-tss'], 0, d['-plotExtra'], d['-pCol'], d['-sortBy'], d['-eps'])
     print "Goodbye!"
     gc.collect()
     return dirname
@@ -133,7 +133,7 @@ def getLabels(d):    # Assign labels based on input model
     printLearnDetails(d['-o'])
     m = ld.learn(d['-f'], dirname + "/" + tempLabelsFile, d['-m'], features)
     print "\nModel learnt successfully.\nSaving details..."
-    sf.saveDetails(m, dirname, d['-i'], [], d['-tss'], 0, d['-plotExtra'], d['-pCol'], d['-sortBy'])
+    sf.saveDetails(m, dirname, d['-i'], [], d['-tss'], 0, d['-plotExtra'], d['-pCol'], d['-sortBy'], d['-eps'])
     del features, m
     print "Goodbye!"
     gc.collect()

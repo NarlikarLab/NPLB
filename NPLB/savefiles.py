@@ -31,7 +31,7 @@ import pickle
 from config import *
 import copy
 
-def createLogo(sequences, filename, pos, features):    # Create logo using Weblogo 3.3
+def createLogo(sequences, filename, pos, features, eps):    # Create logo using Weblogo 3.3
     if sequences == []: return
     seqs = wl.read_seq_data(sequences)
     data = wl.LogoData.from_seqs(seqs)
@@ -43,9 +43,13 @@ def createLogo(sequences, filename, pos, features):    # Create logo using Weblo
     options.text_font = "Arial-BoldMT"
     options.annotate = pos
     formt = wl.LogoFormat(data, options)
-    fout = open(filename, "w")
+    fout = open(filename + ".png", "w")
     wl.png_formatter(data, formt, fout)
     fout.close()
+    if eps == 1: 
+        fout = open(filename + ".eps", "w")
+        wl.eps_formatter(data, formt, fout)
+        fout.close()
 
 def sampleOne(l, n, tu, pos, features):    # Sample values based on model
     arr = ['A', 'C', 'G']
@@ -54,7 +58,7 @@ def sampleOne(l, n, tu, pos, features):    # Sample values based on model
     l1 = map(lambda x: "".join(map(lambda y: arr[y], l1[x])), range(n))
     return l1
 
-def makeImages(d, dirname, tu, tss, prefix):    # Create logo for each architecture of given model
+def makeImages(d, dirname, tu, tss, prefix, eps):    # Create logo for each architecture of given model
     lst = [map(lambda x: " ", range(1, d['features'] + 1)) for i in range(d['arch'])]
     numpy.random.seed(5)
     l = numpy.zeros(shape=(d['arch'], d['features'], d['featureValues']))
@@ -86,7 +90,7 @@ def makeImages(d, dirname, tu, tss, prefix):    # Create logo for each architect
             c1 = c1 + diffN
     l = map(lambda x: sampleOne(l[x], d['t'][x], tu, d['pos'][x], d['features']), range(d['arch']))
     for i in range(d['arch']): 
-        createLogo(l[i], dirname + "/" + prefix + str(i) +".png", lst[i], d['features']) 
+        createLogo(l[i], dirname + "/" + prefix + str(i), lst[i], d['features'], eps) 
 
 
 def makehtml(dirname, d, l):    # Create HTML file containing logos for best model learned by NPLB
@@ -152,7 +156,7 @@ def maketxt(dirname, d):    # Create text file containing details about the best
     os.system("paste" + " " + dirname + tempLabelsModelFile + " " + dirname + tempLabelsFile + " " + ">" + " " + dirname + clusterDetailsFile)
     os.system("rm" + " " + dirname + tempLabelsModelFile  + " " + dirname + tempLabelsFile)
 
-def makeImage(dirname, model, rfile, tss, imgfile, inpfile):    # Create image matrix of input model
+def makeImage(dirname, model, rfile, tss, imgfile, imgfileeps, inpfile):    # Create image matrix of input model
     os.system("cut" + " " + "-f1" + " " + dirname + inpfile + " " + ">" + " " + dirname + hiddenLabels)
     os.system("rev" + " " + dirname + inpfile + " " + "|" + " " + "cut" + " " + "-f1" + " | rev " + ">" + " " + dirname + hiddenOldData)
     
@@ -219,7 +223,9 @@ def makeImage(dirname, model, rfile, tss, imgfile, inpfile):    # Create image m
     for (i1, i2) in lst:
         f.write(i1 + "\t" + i2 + "\n")
     f.close()
-    os.system("gnuplot" + " " + "-e" + " " + "'filename=\"" + dirname + hiddenData + "\"; var=\"" + dirname + imgfile + "\"; var1=\"" + dirname + hiddenDrawLines + "\"; var2=\"" + dirname + hiddenDrawLabels1 + "\"; var3=\"" + dirname + hiddenDrawLabels2 + "\"; var4=\"" + dirname + hiddenDrawXTics + "\"'" + " " + rfile + " 2> /dev/null")
+    os.system("gnuplot" + " " + "-e" + " " + "'filename=\"" + dirname + hiddenData + "\"; var=\"" + dirname + imgfile + "\"; var1=\"" + dirname + hiddenDrawLines + "\"; var2=\"" + dirname + hiddenDrawLabels1 + "\"; var3=\"" + dirname + hiddenDrawLabels2 + "\"; var4=\"" + dirname + hiddenDrawXTics + "\"'" + " " + rfile[0] + " 2> /dev/null")
+    if imgfileeps != "": os.system("gnuplot" + " " + "-e" + " " + "'filename=\"" + dirname + hiddenData + "\"; var=\"" + dirname + imgfileeps + "\"; var1=\"" + dirname + hiddenDrawLines + "\"; var2=\"" + dirname + hiddenDrawLabels1 + "\"; var3=\"" + dirname + hiddenDrawLabels2 + "\"; var4=\"" + dirname + hiddenDrawXTics + "\"'" + " " + rfile[1] + " 2> /dev/null")
+
     os.system("rm" + " " + "-f" + " " + dirname + "/.??*")
 
 
@@ -234,7 +240,7 @@ def savecvls(dirname, cvals):    # Save cross validation likelihood of the model
         else: f.write(str(cvals[i][1]) + "\n")
     f.close()
 
-def saveDetails(d, dirname, rfile, cvals, tss, flag, pEx, pCol, sBy):
+def saveDetails(d, dirname, rfile, cvals, tss, flag, pEx, pCol, sBy, eps):
     dirname = dirname + "/"
     tmp_d_m_pos = d['m']['pos'][0]
     if ((tmp_d_m_pos[0] == 0 or tmp_d_m_pos[0] == 1) and (tmp_d_m_pos[1] == 0 or tmp_d_m_pos[1] == 1) and (tmp_d_m_pos[2] == 0 or tmp_d_m_pos[2] == 1)):
@@ -258,7 +264,7 @@ def saveDetails(d, dirname, rfile, cvals, tss, flag, pEx, pCol, sBy):
             else:
                 d = plotExtras.rearrange(d, pEx, sBy)
     savecvls(dirname, cvals)
-    makeImages(d['m'], dirname + htmlFiles, 0, tss, "")
+    makeImages(d['m'], dirname + htmlFiles, 0, tss, "", eps)
     if flag != 0: makehtml(dirname, d['m'], d['l'])
     if flag == 0: 
         # Save information about the raw data
@@ -271,13 +277,16 @@ def saveDetails(d, dirname, rfile, cvals, tss, flag, pEx, pCol, sBy):
         dOrig['alpha'] = d['m']['alpha']
         dOrig['fnoise'] = [d['m']['n'] for i in range(d['m']['features'])]
         dOrig['t'] = [d['m']['n']]
-        makeImages(dOrig, dirname + htmlFiles, 0, tss, rawDataImgPref)
+        makeImages(dOrig, dirname + htmlFiles, 0, tss, rawDataImgPref, eps)
         makehtmlOrig(dirname, d['m'], d['l'], dOrig)
         if rfile != 0: 
             os.system("sed -e 's/^/1\t/' " + dirname + tempLabelsFile + " > " + dirname + rawClusterDetailsFile)
-            makeImage(dirname, dOrig, rfile, tss, rawDataImage, rawClusterDetailsFile)
+            if eps == 0: makeImage(dirname, dOrig, rfile, tss, rawDataImage, "", rawClusterDetailsFile)
+            else: makeImage(dirname, dOrig, rfile, tss, rawDataImage, rawDataImageEPS, rawClusterDetailsFile)
         maketxt(dirname, d)
-    if rfile != 0 and flag == 0: makeImage(dirname, d['m'], rfile, tss, imageMatrix, clusterDetailsFile)
+    if rfile != 0 and flag == 0: 
+        if eps == 0: makeImage(dirname, d['m'], rfile, tss, imageMatrix, "", clusterDetailsFile)
+        else: makeImage(dirname, d['m'], rfile, tss, imageMatrix, imageMatrixEPS, clusterDetailsFile)
     if pEx != '':
         if pEx[0] != '' and pCol != 0 and flag == 0: plotExtras.plotExt(d, pEx, pCol, dirname)
     collected = gc.collect()

@@ -62,15 +62,18 @@ trainOut* callTrainData(dataSet *ds, int times, unsigned int seed, int arch, flo
 }
 
 /* Assigns labels to data based on given model */
-trainOut* callLearnData(dataSet *ds, model *m){
+trainOut* callLearnData(dataSet *ds, model *m, char *filename){
   int *lp;
   int i, j, k, pos;
   double *p;
   trainOut *to;
+  FILE *fp;
+  double value;
   p = (double*)malloc(sizeof(double)*m->arch);
   if(!p) printMessages(0, NULL);
   lp = (int*)malloc(sizeof(int)*ds->n);
   if(!lp) printMessages(0, NULL);
+  fp = fopen(filename, "w");
   for(i = 0; i < ds->n; i++){
     for(j = 0; j < m->arch; j++){
       p[j] = 0;
@@ -87,7 +90,16 @@ trainOut* callLearnData(dataSet *ds, model *m){
     }
     /* Assigns labels with maximum score */
     lp[i] = maxPos(p, m->arch) + 1;
+    value = 0;
+    for(j = 0; j < m->arch; j++){
+      p[j] = p[j] + log((m->t)[j] + m->alpha) - log(m->n + m->arch*m->alpha);
+      //      printf("%lf\t", p[j]);
+      value = value + p[j];
+    }
+    //    printf("chosen: %d\n", lp[i]);
+    fprintf(fp, "%lf\n", value);
   }
+  fclose(fp);
   free(p);
   /* Update model structure values according to the labels  */
   m->n = ds->n;

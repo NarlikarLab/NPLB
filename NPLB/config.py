@@ -53,6 +53,7 @@ htmlFiles = "html_files"
 imageMatrix = "PAimage.png"
 imageMatrixEPS = "PAimage.eps"
 imgMatrixNumGap = 0.15
+learnScoresFile = "tmpScores.txt"
 makeImageFile = "makeImage.pg"
 makeImageFileEPS = "makeImageEPS.pg"
 makePlotFile = "makePlot.pg"

@@ -43,7 +43,7 @@ void calculateLikelihoodPos(model*, double*, int, int);
 void addRemoveDataPoint(model*, dataSet*, int*, int, int);
 int sampleNewLabel(model*, dataSet*, int, unsigned int*, int, int);
 void *trainData(void *vtds);
-trainOut* callLearnData(dataSet*, model*);
+trainOut* callLearnData(dataSet*, model*, char*);
 int sampleImpFeature(model*, int, unsigned int*, int, double*, trainDataStruct*, double*, int*, long long*, FILE*);
 int solvePosExp(model*, int, int, unsigned int*, int);
 double cvLikelihood(dataSet*, model*);

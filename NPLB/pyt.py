@@ -131,9 +131,13 @@ def getLabels(d):    # Assign labels based on input model
     dirname = d['-o'][1]
     features = getFeatures(d['-f'])
     printLearnDetails(d['-o'])
-    m = ld.learn(d['-f'], dirname + "/" + tempLabelsFile, d['-m'], features)
+    m = ld.learn(d['-f'], dirname + "/" + tempLabelsFile, d['-m'], features, dirname + "/" + learnScoresFile)
     print "\nModel learnt successfully.\nSaving details..."
     sf.saveDetails(m, dirname, d['-i'], [], d['-tss'], 0, d['-plotExtra'], d['-pCol'], d['-sortBy'], d['-eps'])
+    os.system("cp " + dirname + "/" + clusterDetailsFile + " " + dirname + "/" + clusterDetailsFile + "1")
+    os.system("paste " + dirname + "/" + clusterDetailsFile + "1 " + dirname + "/" + learnScoresFile + " > " + dirname + "/" + clusterDetailsFile)
+    os.system("rm " + dirname + "/" + learnScoresFile)
+    os.system("rm " + dirname + "/" + clusterDetailsFile + "1")
     del features, m
     print "Goodbye!"
     gc.collect()

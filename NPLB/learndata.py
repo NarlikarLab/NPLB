@@ -29,7 +29,7 @@ import os
 
 # Assign labels to data set based on scores calculated by input model
 
-def learn(datafile, outfile, modelfile, features):
+def learn(datafile, outfile, modelfile, features, tempfile):
     ds = libctest.getData(datafile, outfile)
     try:
         with open(modelfile, "rb") as fp:
@@ -50,7 +50,7 @@ def learn(datafile, outfile, modelfile, features):
         print "Sequence length in model:", d['features']
         exit(1)
     m = createModel(d)
-    to = libctest.callLearnData(ds, byref(m));
+    to = libctest.callLearnData(ds, byref(m), tempfile);
     tout = getTrainOut(to)
     libctest.freeToXModel(to)
     libctest.freeData(ds)

@@ -1,4 +1,4 @@
 
 NPLB is used on a fasta file containing a list promoter sequences. It finds the optimal number of promoter architectures(PAs) each with their own set of promoter elements(PEs). 
 
-Visit http://computationalbiology.github.io/NPLB/ for more information.
+Visit http://narlikarlab.github.io/NPLB/ for more information.

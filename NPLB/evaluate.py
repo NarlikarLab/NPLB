@@ -145,6 +145,7 @@ def multiEval(picklefile, count, archC):
         checkIndex = -1
         if mid > d['-minarch'] - 1 and cvals[mid-1] == 0: checkIndex = mid-1
         elif cvals[mid] == 0: checkIndex = mid
+        elif mid < d['-maxarch'] - 1 and cvals[mid + 1] == 0: checkIndex = mid + 1 
 
         # Set the maximum number of models that can be
         # learned in parallel.
@@ -210,6 +211,7 @@ def multiEval(picklefile, count, archC):
                 elif checkIndex == mid: cnt = 2
                 elif checkIndex == mid + 1: cnt = 1
                 
+                print "CNT: ", cnt, checkIndex, mid
                 for ic in range(cnt):
                     if (checkIndex+ic) < d['-maxarch'] and (checkIndex+ic) >= (d['-minarch'] - 1) and countsArr[checkIndex+ic] == d['-kfold']*d['-lcount'] and cvals[checkIndex+ic] == 0:    # Compute cross validation likelihood if models of all folds of given architecture have been learned.
 

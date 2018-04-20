@@ -211,7 +211,7 @@ def multiEval(picklefile, count, archC):
                 elif checkIndex == mid: cnt = 2
                 elif checkIndex == mid + 1: cnt = 1
                 
-                print "CNT: ", cnt, checkIndex, mid
+                # print "CNT: ", cnt, checkIndex, mid
                 for ic in range(cnt):
                     if (checkIndex+ic) < d['-maxarch'] and (checkIndex+ic) >= (d['-minarch'] - 1) and countsArr[checkIndex+ic] == d['-kfold']*d['-lcount'] and cvals[checkIndex+ic] == 0:    # Compute cross validation likelihood if models of all folds of given architecture have been learned.
 
@@ -224,9 +224,13 @@ def multiEval(picklefile, count, archC):
                         print "Best model till now has", best[0], "architectures\n"
                         archC = archC + 1
                         print "PROGRESS:", str(int(round(float(archC)/count*100))) + "% complete\n"
+                # print "OLD checkIndex:", checkIndex
                 if checkIndex < d['-maxarch'] and countsArr[checkIndex] == d['-kfold']*d['-lcount']:        # Search for highest cross validation likelihood and update low and high accordingly.
-                    if checkIndex == mid - 1: checkIndex = checkIndex + 1
+                    if checkIndex == mid - 1:
+                        # print "update here 1"
+                        checkIndex = checkIndex + 1
                     if checkIndex == mid and mid > d['-minarch'] - 1 and cvals[checkIndex] != 0:
+                        # print "update here 2"
                         checkIndex = checkIndex + 1
                         if cvals[mid-1] <= cvals[mid]:
                             if mid == d['-maxarch']-1:
@@ -235,10 +239,15 @@ def multiEval(picklefile, count, archC):
                                 flag = 1
                                 break
                         else:
-                            high = mid - 1
+                            # compare to absolute best
+                            # see if it is in the other direction
+                            if best[0] != 0 and best[0] > mid - 1:
+                                low = mid + 1
+                            else: high = mid - 1
                             flag = 1
                             break
                     elif checkIndex == mid and cvals[mid] != 0: checkIndex = checkIndex + 1
+                    # update low high values
                     if checkIndex == mid+1 and checkIndex < d['-maxarch'] and cvals[checkIndex] != 0:
                         if cvals[mid] != 0 and cvals[mid] > cvals[mid+1] and ((mid > d['-minarch'] - 1 and cvals[mid-1] < cvals[mid]) or (mid <= d['-minarch'] - 1)):
                             low = mid
@@ -246,11 +255,19 @@ def multiEval(picklefile, count, archC):
                             flag = 1
                             break
                         else:
-                            low = mid + 1
+                            # compare to absolute best
+                            # see if it is in the other direction
+                            if best[0] != 0 and best[0] < mid + 1:
+                                high = mid - 1
+                            else:
+                                low = mid + 1
                             flag = 1
+                            print "BREAKING HERE!"
                             break
                 if flag == 1:
                     break
+                # print "NEW checkIndex:", checkIndex
+
             if flag == 1:
                 for i in p:
                     if type(i) is int: continue
